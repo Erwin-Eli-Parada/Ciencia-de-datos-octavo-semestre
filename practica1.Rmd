@@ -1,0 +1,266 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+matriz1<-matrix(1:30)
+matriz2<-matrix(1:30)
+matriz3<-matrix(1:30)
+
+mi.matriz<-cbind(matriz1,matriz2,matriz3)
+
+mi.matriz[,-5]
+
+mi.matriz[c(2,4,6,8,10,12,14,16,18,20,22,24,26,28,30),c(1,3)]
+
+mi.matrizSuma<-matriz1+10
+
+mi.matrizProducto<-matriz1*2
+
+aux<-matrix(1:30,1,30)
+mi.matrizPM<-matriz1%*%aux
+
+dim(matriz2)
+class(matriz2)
+summary(matriz2)
+
+is.matrix(mi.matriz)
+is.matrix(mi.matrizPM)
+
+indice<-mi.matrizPM>20
+mi.matrizPM[indice]
+```
+
+
+```{r}
+datosTotales<-rbind(data1,data2)
+
+datosTotales<-rbind(datosTotales,data3,data4)
+
+datosTotales<-rbind(datosTotales,data5,data6,data7,data8,data9,data10)
+
+datosTotales<-rbind(datosTotales,data11,data12,data13,data14,data15,data16,data17,data18,data19,data20)
+
+datosTotales<-rbind(datosTotales,data21,dataRubenC,data23,data24,data25,data26,data27,data28,data29,data30,data31,data32,data33,data34,data35)
+
+distinct(select(datosTotales,Semestre))
+
+datosTotales<-mutate(datosTotales,Semestre=ifelse(substr(Semestre, start=1,stop=6)=="2020-1","20201",Semestre))
+
+datosTotales<-mutate(datosTotales,Semestre=ifelse(substr(Semestre, start=1,stop=5)=="20209","20203",Semestre))
+datosTotales<-mutate(datosTotales,Semestre=ifelse(substr(Semestre, start=1,stop=5)=="20219","20213",Semestre))
+datosTotales<-mutate(datosTotales,Semestre=ifelse(substr(Semestre, start=1,stop=5)=="21203","20213",Semestre))
+
+
+datosTotales<-mutate(datosTotales,Semestre=gsub("-","",Semestre))
+
+datosTotales<-mutate(datosTotales,Semestre=str_trim(Semestre, side=c("both")))
+
+distinct(select(datosTotales,calificacion))
+
+datosTotales<-mutate(datosTotales,Semestre= as.integer(Semestre))
+datosTotales<-mutate(datosTotales,calificacion= as.integer(calificacion))
+
+distinct(select(datosTotales,tipocalificacion))
+
+datosTotales<-mutate(datosTotales,tipocalificacion=ifelse(substr(tipocalificacion, start=1,stop=25)=="EXTRAESCOLAR","Evaluacion Ordinaria",tipocalificacion))
+
+distinct(select(datosTotales,TipoCurso))
+
+datosTotales<-mutate(datosTotales,TipoCurso=ifelse(substr(TipoCurso, start=1,stop=25)=="NORMAL","Ordinario",TipoCurso))
+
+datosTotales<-mutate(datosTotales,TipoCurso=ifelse(substr(TipoCurso, start=1,stop=25)=="Evaluacion Complementaria","Recurso",TipoCurso))
+
+datosTotales<-mutate(datosTotales,TipoCurso=ifelse(substr(TipoCurso, start=1,stop=25)=="Curso especial","Especial",TipoCurso))
+
+distinct(select(datosTotales,ClaveMateria))
+
+datosTotales<-mutate(datosTotales,ClaveMateria=gsub("-","",ClaveMateria))
+
+distinct(select(datosTotales,Materia))
+
+datosTotales<-mutate(datosTotales,Materia=str_trim(Materia, side=c("both")))
+
+datosTotales<-mutate(datosTotales,Materia=toupper(Materia))
+
+datosTotales<-mutate(datosTotales,Materia=ifelse(substr(Materia, start=1,stop=27)=="LENGUAJES Y AUTOMATAS L","LENGUAJES Y AUTOMATAS I",Materia))
+
+#Agregar columna aprobado
+
+datosTotales<-mutate(datosTotales, aprobado=ifelse(calificacion<70,"no aprobado","aprobado"))
+
+datosTotales<-mutate(group_by(datosTotales,ClaveMateria),promedio.ClaveMateria=round(mean(calificacion)))
+
+datosTotales<-mutate(group_by(datosTotales,Semestre),promedio.Semestre=round(mean(calificacion)))
+
+datosTotales<-mutate(group_by(datosTotales,ClaveMateria,Semestre),promedio.MateriaSemestre=round(mean(calificacion)))
+
+promedioMateria<-arrange(distinct(select(datosTotales,ClaveMateria,promedio.ClaveMateria)),promedio.ClaveMateria,ClaveMateria)
+
+promedioMateria<-promedioMateria[1:5,]
+
+grfc.PromedioMateria<-ggplot(promedioMateria)
+grfc.PromedioMateria<-grfc.PromedioMateria+aes(promedioMateria$ClaveMateria,promedioMateria$promedio.ClaveMateria)
+grfc.PromedioMateria<-grfc.PromedioMateria+geom_col()
+
+grfc.PromedioMateria
+
+datosTotales<-datosTotales[!(datosTotales$Semestre=="21203"),]
+datosTotales<-datosTotales[!(datosTotales$Nombre=="NA"),]
+```
+
+
+```{r}
+promedio.semestre<-summarize(group_by(datosTotales,Semestre),prom.semestre=mean(calificacion))
+
+grfc.prmedio.semestre<-ggplot(promedio.semestre)
+grfc.prmedio.semestre<-grfc.prmedio.semestre+aes(Semestre,prom.semestre)
+grfc.prmedio.semestre<-grfc.prmedio.semestre+geom_col()
+
+grfc.prmedio.semestre
+
+promedio.semestreMateria<-summarize(group_by(datosTotales,Semestre,ClaveMateria),prom.semestre=mean(calificacion))
+
+grfc.prmedio.semestreMateria<-ggplot(promedio.semestreMateria)
+grfc.prmedio.semestreMateria<-grfc.prmedio.semestreMateria+aes(Semestre,prom.semestre,color=ClaveMateria)
+grfc.prmedio.semestreMateria<-grfc.prmedio.semestreMateria+geom_point()
+
+grfc.prmedio.semestreMateria
+```
+
+
+```{r}
+datos.grafica<-select(datosTotales,ClaveMateria,aprobado)
+
+grafica2<-ggplot(datos.grafica)
+grafica2<-grafica2+aes(ClaveMateria,fill=aprobado)
+grafica2<-grafica2+geom_bar()
+
+grafica2
+
+grafica3<-ggplot(datos.grafica)
+grafica3<-grafica3+aes(ClaveMateria,color=aprobado)
+grafica3<-grafica3+geom_bar()
+
+grafica3
+
+datos.grafica<-select(datosTotales,ClaveMateria,aprobado,Semestre)
+
+grafica4<-ggplot(datos.grafica)
+grafica4<-grafica4+aes(ClaveMateria,color=aprobado)
+grafica4<-grafica4+geom_bar()+facet_wrap(~Semestre)
+
+grafica4
+
+datos.grafica<-select(datosTotales,ClaveMateria,aprobado,Semestre)
+
+grafica5<-ggplot(datos.grafica)
+grafica5<-grafica5+aes(ClaveMateria,color=aprobado)
+grafica5<-grafica5+geom_bar()
+
+grafica5
+```
+
+
+```{r}
+prom_alumno= mutate(group_by(datosTotales,Semestre),promedio.Semeste=mean(calificacion))
+  
+data_serie <- ts(data=prom_alumno$promedio.Semestre, frequency = 12,prom_alumno$Semestre,start = 20171, end = 20213)
+
+autoplot(data_serie)+labs(title = "Tendencia calificación por promedio",x="Semestre",y="calificacion",colour="#00a0dc")+theme_bw()
+
+fit<-decompose(data_serie,type = "additive")
+fit2<-decompose(data_serie,type = "multiplicative")
+
+autoplot(fit)
+autoplot(fit2)
+ggseasonplot(data_serie)
+```
+
+
+```{r}
+prom_eli= mutate(group_by(eli,Semestre),promedio.Semestre=round(mean(calificacion)))
+  
+data_serie <- ts(data=prom_eli$promedio.Semestre, frequency = 3,start = 20171, end = 20213)
+
+autoplot(data_serie)+labs(title = "Tendencia calificación por promedio",x="Semestre",y="calificacion",colour="#00a0dc")+theme_bw()
+
+fit<-decompose(data_serie,type = "additive")
+fit2<-decompose(data_serie,type = "multiplicative")
+
+autoplot(fit)
+autoplot(fit2)
+ggseasonplot(data_serie)
+```
+
+
+```{r}
+promedio.semestre<-summarize(group_by(datosTotales,Semestre),prom.semestre=mean(calificacion))
+grfc.prmedio.semestre<-ggplot(promedio.semestre)
+grfc.prmedio.semestre<-grfc.prmedio.semestre+aes(Semestre,prom.semestre)
+grfc.prmedio.semestre<-grfc.prmedio.semestre+geom_col()
+
+grfc.prmedio.semestre
+
+
+hist(datosTotales$calificacion,col="lightSalmon", xlab="Promedio", main="Frecuencia de promedios")
+```
+
+
+```{r}
+eli<-datosTotales[(datosTotales$Nombre=="Parada Martínez Erwin Elí"),]
+
+promedio.semestre.eli<-summarize(group_by(eli,Semestre),prom.semestre=mean(calificacion))
+grfc.prmedio.semestre.eli<-ggplot(promedio.semestre.eli)
+grfc.prmedio.semestre.eli<-grfc.prmedio.semestre.eli+aes(Semestre,prom.semestre)
+grfc.prmedio.semestre.eli<-grfc.prmedio.semestre.eli+geom_col()
+
+grfc.prmedio.semestre.eli
+
+hist(eli$calificacion,col="lightSalmon", xlab="Promedio", main="Frecuencia de promedios de Eli")
+```
+
+
+```{r}
+promedio.alumno<-summarize(group_by(datosTotales,Nombre),prom.alumno=mean(calificacion))
+grfc.prmedio.alumno<-ggplot(promedio.alumno)
+grfc.prmedio.alumno<-grfc.prmedio.alumno+aes(Nombre,prom.alumno,fill =Nombre)
+grfc.prmedio.alumno<-grfc.prmedio.alumno+scale_y_continuous(breaks=seq(0, 100, 5))
+grfc.prmedio.alumno<-grfc.prmedio.alumno+geom_col(stat = "identity")
+
+grfc.prmedio.alumno
+```
+
+
+```{r}
+promedioTotal<-mean(datosTotales$calificacion)
+promedioEli<-mean(eli$calificacion)
+```
+
+
+```{r}
+materias_r<-datosTotales[datosTotales$aprobado=="no aprobado","ClaveMateria"]
+num_materias_r<-materias_r %>% group_by(ClaveMateria) %>% tally()
+
+graficaR<-ggplot(num_materias_r)
+graficaR<-graficaR+aes(ClaveMateria,n)
+graficaR<-graficaR+scale_y_continuous(breaks=seq(0, 10, 1))
+graficaR<-graficaR+geom_col()
+
+graficaR
+```
+
